@@ -620,7 +620,62 @@ const Viewer3D = ({ pallet, palletResults, isOptimizing, boxOpacity, updatePalle
     };
   }, [pallet.w, pallet.h, pallet.d, updatePalletMetric]);
 
-  // Update Scene content
+  // Handle Box Simulation Rendering
+  useEffect(() => {
+    if (!boxesGroupRef.current) return;
+    
+    // Clear boxes group if simIndex is 0
+    if (simIndex === 0) {
+      while(boxesGroupRef.current.children.length > 0) {
+        boxesGroupRef.current.remove(boxesGroupRef.current.children[0]);
+      }
+    }
+
+    const boxGeoCache: { [key: string]: THREE.BoxGeometry } = {};
+    const currentBoxesInScene = boxesGroupRef.current.children.length;
+    const placementsList = allPlacementsOrdered || [];
+    
+    // Add new boxes
+    if (simIndex > currentBoxesInScene) {
+      for (let i = currentBoxesInScene; i < simIndex; i++) {
+        const p = placementsList[i];
+        if (!p) continue;
+
+        const key = `${p.w}-${p.h}-${p.d}`;
+        if (!boxGeoCache[key]) boxGeoCache[key] = new THREE.BoxGeometry(p.w - 2, p.h - 2, p.d - 2);
+        
+        const material = new THREE.MeshStandardMaterial({ 
+          color: p.color, 
+          map: textures.cardboard, 
+          roughness: 0.8, 
+          metalness: 0.05, 
+          transparent: true, 
+          opacity: boxOpacity 
+        });
+        const mesh = new THREE.Mesh(boxGeoCache[key], material);
+        
+        const targetY = 144 + p.y + p.h/2;
+        mesh.position.set(p.offsetX + p.x + p.w/2, targetY + 600, p.z + p.d/2); // Start from above
+        mesh.userData.targetY = targetY;
+        mesh.userData.velocity = 0;
+        
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        const edges = new THREE.EdgesGeometry(boxGeoCache[key]);
+        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.1 }));
+        mesh.add(line);
+        boxesGroupRef.current.add(mesh);
+      }
+    } 
+    // Remove boxes if browsing back
+    else if (simIndex < currentBoxesInScene) {
+      while(boxesGroupRef.current.children.length > simIndex) {
+        boxesGroupRef.current.remove(boxesGroupRef.current.children[boxesGroupRef.current.children.length - 1]);
+      }
+    }
+  }, [simIndex, allPlacementsOrdered, textures, boxOpacity]);
+
+  // Update Static Scene content (Pallets and Metrics)
   useEffect(() => {
     if (!sceneRef.current || !boxesGroupRef.current) return;
     const scene = sceneRef.current;
@@ -630,13 +685,6 @@ const Viewer3D = ({ pallet, palletResults, isOptimizing, boxOpacity, updatePalle
       if (c.userData.isDynamic && c !== boxesGroupRef.current) toRemove.push(c); 
     });
     toRemove.forEach(c => scene.remove(c));
-    
-    // Clear boxes group if simIndex is 0
-    if (simIndex === 0) {
-      while(boxesGroupRef.current.children.length > 0) {
-        boxesGroupRef.current.remove(boxesGroupRef.current.children[0]);
-      }
-    }
 
     const woodMat = new THREE.MeshStandardMaterial({ map: textures.wood, color: 0xa87e53, roughness: 0.9, metalness: 0.0 });
     const woodMatDark = new THREE.MeshStandardMaterial({ map: textures.wood, color: 0x8b6d5c, roughness: 0.9, metalness: 0.0 });
@@ -673,29 +721,12 @@ const Viewer3D = ({ pallet, palletResults, isOptimizing, boxOpacity, updatePalle
       return group;
     };
 
-    const boxGeoCache: { [key: string]: THREE.BoxGeometry } = {};
     dragControlsRef.current.draggable = [];
 
-    // Use passed prop instead of window
-    const placementsList = allPlacementsOrdered || [];
-
-    // Render Pallets
+    // Render Pallets and Metrics
     palletResults.forEach((palletGroup, pIdx) => {
       const offsetX = pIdx * (pallet.w + 400); 
-      const isCurrentPallet = simIndex > 0 && placementsList[simIndex - 1]?.palletIndex === palletGroup.palletIndex;
-      
-      const palletMesh = createPalletMesh(offsetX);
-      if (isCurrentPallet) {
-        // Highlight active pallet
-        palletMesh.traverse((child: any) => {
-          if (child.isMesh) {
-            child.material = child.material.clone();
-            child.material.emissive = new THREE.Color(0x6366f1);
-            child.material.emissiveIntensity = 0.15;
-          }
-        });
-      }
-      scene.add(palletMesh);
+      scene.add(createPalletMesh(offsetX));
 
       // Metrics Sprite
       const textLines = [
@@ -716,50 +747,7 @@ const Viewer3D = ({ pallet, palletResults, isOptimizing, boxOpacity, updatePalle
         }
       });
     });
-
-    // Handle Box Rendering based on simIndex
-    const currentBoxesInScene = boxesGroupRef.current.children.length;
-    
-    // Add new boxes
-    if (simIndex > currentBoxesInScene) {
-      for (let i = currentBoxesInScene; i < simIndex; i++) {
-        const p = allPlacementsOrdered[i];
-        if (!p) continue;
-
-        const key = `${p.w}-${p.h}-${p.d}`;
-        if (!boxGeoCache[key]) boxGeoCache[key] = new THREE.BoxGeometry(p.w - 2, p.h - 2, p.d - 2);
-        
-        const material = new THREE.MeshStandardMaterial({ 
-          color: p.color, 
-          map: textures.cardboard, 
-          roughness: 0.8, 
-          metalness: 0.05, 
-          transparent: true, 
-          opacity: boxOpacity 
-        });
-        const mesh = new THREE.Mesh(boxGeoCache[key], material);
-        
-        const targetY = 144 + p.y + p.h/2;
-        mesh.position.set(p.offsetX + p.x + p.w/2, targetY + 600, p.z + p.d/2); // Start from above
-        mesh.userData.targetY = targetY;
-        mesh.userData.velocity = 0;
-        
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        const edges = new THREE.EdgesGeometry(boxGeoCache[key]);
-        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.1 }));
-        mesh.add(line);
-        boxesGroupRef.current.add(mesh);
-      }
-    } 
-    // Remove boxes if browsing back
-    else if (simIndex < currentBoxesInScene) {
-      while(boxesGroupRef.current.children.length > simIndex) {
-        boxesGroupRef.current.remove(boxesGroupRef.current.children[boxesGroupRef.current.children.length - 1]);
-      }
-    }
-
-  }, [pallet.w, pallet.d, pallet.h, palletResults, textures, boxOpacity, simIndex]);
+  }, [pallet.w, pallet.d, pallet.h, palletResults, textures]);
 
   return (
     <div className="w-full h-full relative" ref={mountRef}>
@@ -1105,25 +1093,42 @@ export default function App() {
 
 
         {/* Simulation Control HUD */}
-        <div className="absolute bottom-8 right-8 left-88 z-10 pointer-events-none flex flex-col items-center gap-4">
+        <div className="absolute bottom-8 right-8 left-80 z-10 pointer-events-none flex flex-col items-center gap-4">
           <AnimatePresence>
+            {simIndex >= 0 && simIndex < allOrderedPlacements.length && isSimulating && (
+              <motion.div 
+                key="sim-status-indicator"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 10, opacity: 0 }}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 mb-2"
+              >
+                <div className="w-2 h-2 rounded-full bg-white animate-ping" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Simülasyon Aktif</span>
+              </motion.div>
+            )}
             {simIndex > 0 && simIndex <= allOrderedPlacements.length && (
               <motion.div 
+                key={`placement-info-card-${simIndex}`}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 10, opacity: 0 }}
                 className="bg-slate-900 text-white p-4 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-4 w-fit pointer-events-auto"
               >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg border border-white/10" style={{ backgroundColor: allOrderedPlacements[simIndex-1].color }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg border border-white/10" style={{ backgroundColor: allOrderedPlacements[simIndex-1]?.color || '#ccc' }}>
                   <Box className="w-5 h-5 text-white" />
                 </div>
                 <div className="pr-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest leading-none">Şu An Yerleştiriliyor</span>
-                    <span className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse" />
+                    <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest leading-none">Yerleştiriliyor</span>
+                    <span className="w-1 h-1 rounded-full bg-indigo-400" />
                   </div>
-                  <p className="text-sm font-bold text-white tracking-tight">SKU-{allOrderedPlacements[simIndex-1].id} • Palet {allOrderedPlacements[simIndex-1].palletIndex}</p>
-                  <p className="text-[10px] text-slate-400 font-semibold uppercase">{allOrderedPlacements[simIndex-1].w}x{allOrderedPlacements[simIndex-1].d}x{allOrderedPlacements[simIndex-1].h}mm • {allOrderedPlacements[simIndex-1].weight}kg</p>
+                  <p className="text-sm font-bold text-white tracking-tight">
+                    SKU-{allOrderedPlacements[simIndex-1]?.id} • Palet {allOrderedPlacements[simIndex-1]?.palletIndex}
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-semibold uppercase">
+                    {allOrderedPlacements[simIndex-1]?.w}x{allOrderedPlacements[simIndex-1]?.d}x{allOrderedPlacements[simIndex-1]?.h}mm • {allOrderedPlacements[simIndex-1]?.weight}kg
+                  </p>
                 </div>
               </motion.div>
             )}
