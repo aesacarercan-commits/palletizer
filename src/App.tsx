@@ -381,7 +381,7 @@ const createTextSprite = (textLines: string[], maxWidth: number, color = '#0f172
 
 // --- Viewer Component ---
 
-const Viewer3D = ({ pallet, palletResults, isOptimizing, boxOpacity, updatePalletMetric, removePalletMetric, simIndex, allPlacementsOrdered }: any) => {
+const Viewer3D = ({ pallet, palletResults, isOptimizing, boxOpacity, updatePalletMetric, removePalletMetric, simIndex, simReset, allPlacementsOrdered }: any) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -620,45 +620,49 @@ const Viewer3D = ({ pallet, palletResults, isOptimizing, boxOpacity, updatePalle
     };
   }, [pallet.w, pallet.h, pallet.d, updatePalletMetric]);
 
+  // Clear scene when simulation resets (new optimization result)
+  useEffect(() => {
+    if (!boxesGroupRef.current) return;
+    while (boxesGroupRef.current.children.length > 0) {
+      const child = boxesGroupRef.current.children[0] as any;
+      if (child.geometry) child.geometry.dispose();
+      if (child.material) child.material.dispose();
+      boxesGroupRef.current.remove(child);
+    }
+  }, [simReset]);
+
   // Handle Box Simulation Rendering
   useEffect(() => {
     if (!boxesGroupRef.current) return;
-    
-    // Clear boxes group if simIndex is 0
-    if (simIndex === 0) {
-      while(boxesGroupRef.current.children.length > 0) {
-        boxesGroupRef.current.remove(boxesGroupRef.current.children[0]);
-      }
-    }
 
-    const boxGeoCache: { [key: string]: THREE.BoxGeometry } = {};
-    const currentBoxesInScene = boxesGroupRef.current.children.length;
     const placementsList = allPlacementsOrdered || [];
-    
+    const currentBoxesInScene = boxesGroupRef.current.children.length;
+
     // Add new boxes
     if (simIndex > currentBoxesInScene) {
+      const boxGeoCache: { [key: string]: THREE.BoxGeometry } = {};
       for (let i = currentBoxesInScene; i < simIndex; i++) {
         const p = placementsList[i];
         if (!p) continue;
 
         const key = `${p.w}-${p.h}-${p.d}`;
         if (!boxGeoCache[key]) boxGeoCache[key] = new THREE.BoxGeometry(p.w - 2, p.h - 2, p.d - 2);
-        
-        const material = new THREE.MeshStandardMaterial({ 
-          color: p.color, 
-          map: textures.cardboard, 
-          roughness: 0.8, 
-          metalness: 0.05, 
-          transparent: true, 
-          opacity: boxOpacity 
+
+        const material = new THREE.MeshStandardMaterial({
+          color: p.color,
+          map: textures.cardboard,
+          roughness: 0.8,
+          metalness: 0.05,
+          transparent: true,
+          opacity: boxOpacity,
         });
         const mesh = new THREE.Mesh(boxGeoCache[key], material);
-        
-        const targetY = 144 + p.y + p.h/2;
-        mesh.position.set(p.offsetX + p.x + p.w/2, targetY + 600, p.z + p.d/2); // Start from above
+
+        const targetY = 144 + p.y + p.h / 2;
+        mesh.position.set(p.offsetX + p.x + p.w / 2, targetY + 600, p.z + p.d / 2);
         mesh.userData.targetY = targetY;
         mesh.userData.velocity = 0;
-        
+
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         const edges = new THREE.EdgesGeometry(boxGeoCache[key]);
@@ -666,14 +670,26 @@ const Viewer3D = ({ pallet, palletResults, isOptimizing, boxOpacity, updatePalle
         mesh.add(line);
         boxesGroupRef.current.add(mesh);
       }
-    } 
+    }
     // Remove boxes if browsing back
     else if (simIndex < currentBoxesInScene) {
-      while(boxesGroupRef.current.children.length > simIndex) {
-        boxesGroupRef.current.remove(boxesGroupRef.current.children[boxesGroupRef.current.children.length - 1]);
+      while (boxesGroupRef.current.children.length > simIndex) {
+        const child = boxesGroupRef.current.children[boxesGroupRef.current.children.length - 1] as any;
+        boxesGroupRef.current.remove(child);
       }
     }
   }, [simIndex, allPlacementsOrdered, textures, boxOpacity]);
+
+  // Sync opacity on existing boxes when slider changes
+  useEffect(() => {
+    if (!boxesGroupRef.current) return;
+    boxesGroupRef.current.children.forEach((child: any) => {
+      if (child.material) {
+        child.material.opacity = boxOpacity;
+        child.material.needsUpdate = true;
+      }
+    });
+  }, [boxOpacity]);
 
   // Update Static Scene content (Pallets and Metrics)
   useEffect(() => {
@@ -791,6 +807,7 @@ export default function App() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simIndex, setSimIndex] = useState(0);
   const [simSpeed, setSimSpeed] = useState(200); // ms per box
+  const [simReset, setSimReset] = useState(0); // increment to force scene clear
 
   const allOrderedPlacements = useMemo(() => {
     const list: any[] = [];
@@ -868,9 +885,10 @@ export default function App() {
         volumeUtilization: result.volumeUtilization.toFixed(2)
       });
       setIsOptimizing(false);
-      // Auto start simulation after optimization
+      // Reset simulation then auto-start after a tick so allOrderedPlacements updates first
+      setSimReset(r => r + 1);
       setSimIndex(0);
-      setIsSimulating(true);
+      setTimeout(() => setIsSimulating(true), 50);
     }, 400);
   }, [pallet, maxPalletWeight, boxes, allowRotation, palletResults]);
 
@@ -1196,14 +1214,15 @@ export default function App() {
           </motion.div>
         </div>
 
-        <Viewer3D 
-          pallet={pallet} 
-          palletResults={palletResults} 
-          isOptimizing={isOptimizing} 
+        <Viewer3D
+          pallet={pallet}
+          palletResults={palletResults}
+          isOptimizing={isOptimizing}
           boxOpacity={boxOpacity}
           updatePalletMetric={updatePalletMetric}
           removePalletMetric={removePalletMetric}
           simIndex={simIndex}
+          simReset={simReset}
           allPlacementsOrdered={allOrderedPlacements}
         />
       </main>
