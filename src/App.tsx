@@ -249,9 +249,9 @@ const InputField = ({ label, value, onChange, type = "number", step = "1" }: Inp
       <input 
         type={type} 
         step={step} 
-        value={value} 
-        onChange={onChange} 
-        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all hover:bg-white hover:border-slate-300" 
+        value={value}
+        onChange={onChange}
+        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all hover:bg-white hover:border-slate-300"
       />
     </div>
   </div>
@@ -270,7 +270,7 @@ const BoxRow = ({ box, onDelete, onChange }: BoxRowProps) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, scale: 0.95 }}
-    className="flex flex-col p-4 mb-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all group"
+    className="flex flex-col p-4 mb-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-cyan-100 transition-all group"
   >
     <div className="flex justify-between items-center mb-4">
       <div className="flex items-center gap-3">
@@ -289,21 +289,21 @@ const BoxRow = ({ box, onDelete, onChange }: BoxRowProps) => (
     <div className="grid grid-cols-3 gap-3 mb-4">
       <div className="space-y-1">
         <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest pl-1">Genişlik</span>
-        <input type="number" value={box.w} onChange={(e: any) => onChange(box.id, 'w', parseInt(e.target.value) || 0)} className="w-full border border-slate-100 bg-slate-50 rounded-xl px-2 py-2 text-xs text-center font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500/10 focus:outline-none transition-all" />
+        <input type="number" value={box.w} onChange={(e: any) => onChange(box.id, 'w', parseInt(e.target.value) || 0)} className="w-full border border-slate-100 bg-slate-50 rounded-xl px-2 py-2 text-xs text-center font-bold focus:bg-white focus:ring-2 focus:ring-cyan-500/10 focus:outline-none transition-all" />
       </div>
       <div className="space-y-1">
         <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest pl-1">Derinlik</span>
-        <input type="number" value={box.d} onChange={(e: any) => onChange(box.id, 'd', parseInt(e.target.value) || 0)} className="w-full border border-slate-100 bg-slate-50 rounded-xl px-2 py-2 text-xs text-center font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500/10 focus:outline-none transition-all" />
+        <input type="number" value={box.d} onChange={(e: any) => onChange(box.id, 'd', parseInt(e.target.value) || 0)} className="w-full border border-slate-100 bg-slate-50 rounded-xl px-2 py-2 text-xs text-center font-bold focus:bg-white focus:ring-2 focus:ring-cyan-500/10 focus:outline-none transition-all" />
       </div>
       <div className="space-y-1">
         <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest pl-1">Yükseklik</span>
-        <input type="number" value={box.h} onChange={(e: any) => onChange(box.id, 'h', parseInt(e.target.value) || 0)} className="w-full border border-slate-100 bg-slate-50 rounded-xl px-2 py-2 text-xs text-center font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500/10 focus:outline-none transition-all" />
+        <input type="number" value={box.h} onChange={(e: any) => onChange(box.id, 'h', parseInt(e.target.value) || 0)} className="w-full border border-slate-100 bg-slate-50 rounded-xl px-2 py-2 text-xs text-center font-bold focus:bg-white focus:ring-2 focus:ring-cyan-500/10 focus:outline-none transition-all" />
       </div>
     </div>
     <div className="grid grid-cols-2 gap-3">
       <div className="space-y-1">
-        <span className="text-[9px] text-indigo-400 font-bold uppercase tracking-widest pl-1">Ağırlık (kg)</span>
-        <input type="number" step="0.1" value={box.weight} onChange={(e: any) => onChange(box.id, 'weight', parseFloat(e.target.value) || 0)} className="w-full border border-indigo-100 bg-indigo-50 text-indigo-700 rounded-xl px-2 py-2 text-xs text-center font-black focus:ring-2 focus:ring-indigo-500/10 focus:outline-none transition-all" />
+        <span className="text-[9px] text-cyan-400 font-bold uppercase tracking-widest pl-1">Ağırlık (kg)</span>
+        <input type="number" step="0.1" value={box.weight} onChange={(e: any) => onChange(box.id, 'weight', parseFloat(e.target.value) || 0)} className="w-full border border-cyan-100 bg-cyan-50 text-cyan-700 rounded-xl px-2 py-2 text-xs text-center font-black focus:ring-2 focus:ring-cyan-500/10 focus:outline-none transition-all" />
       </div>
       <div className="space-y-1">
         <span className="text-[9px] text-emerald-400 font-bold uppercase tracking-widest pl-1">Adet</span>
@@ -776,7 +776,7 @@ const Viewer3D = ({ pallet, palletResults, isOptimizing, boxOpacity, updatePalle
             className="absolute inset-0 bg-white/40 backdrop-blur-md z-50 flex items-center justify-center"
           >
             <div className="bg-white p-10 rounded-3xl shadow-2xl flex flex-col items-center border border-slate-100">
-              <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-6"></div>
+              <div className="w-12 h-12 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mb-6"></div>
               <span className="text-slate-900 font-bold text-xl tracking-tight uppercase">Algoritma Çalışıyor</span>
               <span className="text-sm text-slate-400 font-bold mt-2 uppercase tracking-widest">En İyi Konumlandırma Hesaplanıyor</span>
             </div>
@@ -915,12 +915,12 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100">
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 text-slate-900 font-sans selection:bg-cyan-100">
       {/* Sidebar */}
       <aside className="w-80 bg-white border-r border-slate-200 flex flex-col shadow-xl z-20 overflow-hidden">
         <div className="p-6 border-b border-slate-100 bg-white">
           <div className="flex items-center gap-4 mb-1">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-100">
+            <div className="w-10 h-10 bg-cyan-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-100">
               <Box className="w-6 h-6" />
             </div>
             <div>
@@ -933,7 +933,7 @@ export default function App() {
         <div className="flex-1 overflow-y-auto custom-scroll p-6 space-y-8 bg-white">
           <section>
             <div className="flex items-center gap-2 mb-5 text-slate-900 border-b pb-2 border-slate-100">
-              <Settings className="w-4 h-4 text-indigo-600" />
+              <Settings className="w-4 h-4 text-cyan-600" />
               <h2 className="text-xs font-bold uppercase tracking-widest">Yapılandırma</h2>
             </div>
             
@@ -947,13 +947,13 @@ export default function App() {
             
             <div className="mt-4 flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl group transition-all hover:bg-slate-100 hover:border-slate-200">
               <label htmlFor="rot" className="flex items-center gap-3 text-[10px] font-bold text-slate-600 uppercase tracking-wider cursor-pointer select-none">
-                <RotateCcw className="w-4 h-4 text-indigo-500" />
+                <RotateCcw className="w-4 h-4 text-cyan-500" />
                 Dönüşe İzin Ver
               </label>
               <button 
                 id="rot"
                 onClick={() => setAllowRotation(!allowRotation)}
-                className={`relative w-10 h-6 flex items-center rounded-full transition-colors focus:outline-none ${allowRotation ? 'bg-indigo-600' : 'bg-slate-300'}`}
+                className={`relative w-10 h-6 flex items-center rounded-full transition-colors focus:outline-none ${allowRotation ? 'bg-cyan-600' : 'bg-slate-300'}`}
               >
                 <motion.div 
                   initial={false}
@@ -963,8 +963,8 @@ export default function App() {
               </button>
             </div>
 
-            <div className="mt-6 p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
-              <label className="block text-[10px] font-bold text-indigo-800 uppercase tracking-widest mb-3">Kutu Opaklığı (%)</label>
+            <div className="mt-6 p-4 bg-cyan-50 rounded-2xl border border-cyan-100">
+              <label className="block text-[10px] font-bold text-cyan-800 uppercase tracking-widest mb-3">Kutu Opaklığı (%)</label>
               <input 
                 type="range" 
                 min="0.1" 
@@ -972,12 +972,12 @@ export default function App() {
                 step="0.05" 
                 value={boxOpacity} 
                 onChange={(e) => setBoxOpacity(parseFloat(e.target.value))} 
-                className="w-full h-1.5 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" 
+                className="w-full h-1.5 bg-cyan-200 rounded-lg appearance-none cursor-pointer accent-cyan-600" 
               />
               <div className="flex justify-between mt-2 px-1">
-                <span className="text-[10px] font-bold text-indigo-300">10%</span>
-                <span className="text-[10px] font-bold text-indigo-600 tracking-widest">{Math.round(boxOpacity * 100)}%</span>
-                <span className="text-[10px] font-bold text-indigo-300">100%</span>
+                <span className="text-[10px] font-bold text-cyan-300">10%</span>
+                <span className="text-[10px] font-bold text-cyan-600 tracking-widest">{Math.round(boxOpacity * 100)}%</span>
+                <span className="text-[10px] font-bold text-cyan-300">100%</span>
               </div>
             </div>
           </section>
@@ -985,12 +985,12 @@ export default function App() {
           <section>
             <div className="flex items-center justify-between mb-5 border-b pb-2 border-slate-100">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-indigo-600" />
+                <FileText className="w-4 h-4 text-cyan-600" />
                 <h2 className="text-xs font-bold uppercase tracking-widest text-slate-900">Yük Listesi</h2>
               </div>
               <button 
                 onClick={addBox} 
-                className="flex items-center gap-1.5 p-2 bg-slate-50 text-slate-600 hover:bg-indigo-600 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100"
+                className="flex items-center gap-1.5 p-2 bg-slate-50 text-slate-600 hover:bg-cyan-600 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100"
                 title="Yeni SKU Ekle"
               >
                 <Plus className="w-4 h-4" />
@@ -1009,7 +1009,7 @@ export default function App() {
           <button 
             onClick={runOptimization} 
             disabled={isOptimizing} 
-            className="w-full group relative flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white py-4 rounded-2xl font-bold text-sm tracking-tight shadow-lg shadow-indigo-100 active:scale-[0.98] transition-all"
+            className="w-full group relative flex items-center justify-center gap-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-300 text-white py-4 rounded-2xl font-bold text-sm tracking-tight shadow-lg shadow-cyan-100 active:scale-[0.98] transition-all"
           >
             <Play className={`w-4 h-4 ${isOptimizing ? 'animate-pulse' : ''}`} />
             {isOptimizing ? 'Hesaplanıyor' : 'Planı Yenile'}
@@ -1035,7 +1035,7 @@ export default function App() {
               </div>
               <button 
                 onClick={() => (window as any).fitCamera()}
-                className="pointer-events-auto p-2 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-indigo-600 rounded-xl transition-all border border-slate-100"
+                className="pointer-events-auto p-2 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-cyan-600 rounded-xl transition-all border border-slate-100"
                 title="Görünümü Sığdır"
               >
                 <Maximize className="w-3.5 h-3.5" />
@@ -1047,12 +1047,12 @@ export default function App() {
                 <div className="space-y-1">
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest block">Hacim Kullanım</span>
                   <div className="flex items-center gap-2">
-                    <Volume2 className="w-4 h-4 text-indigo-500" />
+                    <Volume2 className="w-4 h-4 text-cyan-500" />
                     <span className="text-3xl font-bold text-slate-900 leading-none">{metrics.volumeUtilization}%</span>
                   </div>
                 </div>
                 <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-indigo-500 transition-all duration-1000 ease-out" style={{ width: `${metrics.volumeUtilization}%` }} />
+                  <div className="h-full bg-cyan-500 transition-all duration-1000 ease-out" style={{ width: `${metrics.volumeUtilization}%` }} />
                 </div>
               </div>
 
@@ -1070,12 +1070,12 @@ export default function App() {
               <div className="pt-2">
                 <div className="flex justify-between items-center mb-1.5">
                   <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest block">Planlanan Ürün</span>
-                  <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">{Math.round((metrics.used / metrics.total) * 100 || 0)}%</span>
+                  <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded-full">{Math.round((metrics.used / metrics.total) * 100 || 0)}%</span>
                 </div>
                 <div className="flex justify-between items-center text-sm font-bold">
-                  <span className="text-indigo-600 text-lg">{metrics.used}</span>
+                  <span className="text-cyan-600 text-lg">{metrics.used}</span>
                   <div className="flex-1 mx-3 h-0.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-indigo-600/20" style={{ width: `${(metrics.used / metrics.total) * 100 || 0}%` }} />
+                    <div className="h-full bg-cyan-600/20" style={{ width: `${(metrics.used / metrics.total) * 100 || 0}%` }} />
                   </div>
                   <span className="text-slate-400">{metrics.total}</span>
                 </div>
@@ -1089,7 +1089,7 @@ export default function App() {
             transition={{ delay: 0.2 }}
             className="bg-slate-900 rounded-2xl px-5 py-3 shadow-lg flex items-center gap-4 border border-slate-800"
           >
-            <div className="p-1.5 bg-indigo-500 rounded-lg">
+            <div className="p-1.5 bg-cyan-500 rounded-lg">
               <Move className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -1119,7 +1119,7 @@ export default function App() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 10, opacity: 0 }}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 mb-2"
+                className="bg-cyan-600 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 mb-2"
               >
                 <div className="w-2 h-2 rounded-full bg-white animate-ping" />
                 <span className="text-[10px] font-bold uppercase tracking-widest">Simülasyon Aktif</span>
@@ -1138,8 +1138,8 @@ export default function App() {
                 </div>
                 <div className="pr-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest leading-none">Yerleştiriliyor</span>
-                    <span className="w-1 h-1 rounded-full bg-indigo-400" />
+                    <span className="text-[9px] font-bold text-cyan-400 uppercase tracking-widest leading-none">Yerleştiriliyor</span>
+                    <span className="w-1 h-1 rounded-full bg-cyan-400" />
                   </div>
                   <p className="text-sm font-bold text-white tracking-tight">
                     SKU-{allOrderedPlacements[simIndex-1]?.id} • Palet {allOrderedPlacements[simIndex-1]?.palletIndex}
@@ -1160,20 +1160,20 @@ export default function App() {
             <div className="flex items-center gap-2 pr-6 border-r border-slate-100">
               <button 
                 onClick={() => { setSimIndex(0); setIsSimulating(false); }}
-                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                className="p-2 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-xl transition-all"
                 title="Sıfırla"
               >
                 <SkipBack className="w-5 h-5" />
               </button>
               <button 
                 onClick={() => setIsSimulating(!isSimulating)}
-                className={`w-12 h-12 flex items-center justify-center rounded-2xl shadow-lg transition-all ${isSimulating ? 'bg-amber-100 text-amber-600 shadow-amber-100' : 'bg-indigo-600 text-white shadow-indigo-100'}`}
+                className={`w-12 h-12 flex items-center justify-center rounded-2xl shadow-lg transition-all ${isSimulating ? 'bg-amber-100 text-amber-600 shadow-amber-100' : 'bg-cyan-600 text-white shadow-cyan-100'}`}
               >
                 {isSimulating ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-current" />}
               </button>
               <button 
                 onClick={() => setSimIndex(prev => Math.min(totalPlacements, prev + 1))}
-                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                className="p-2 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-xl transition-all"
                 title="Sonraki Adım"
               >
                 <SkipForward className="w-5 h-5" />
@@ -1183,14 +1183,14 @@ export default function App() {
             <div className="min-w-[200px] space-y-2">
               <div className="flex justify-between items-center px-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">SİMÜLASYON İLERLEMESİ</span>
-                <span className="text-xs font-black text-indigo-600">{simIndex} / {totalPlacements}</span>
+                <span className="text-xs font-black text-cyan-600">{simIndex} / {totalPlacements}</span>
               </div>
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden cursor-pointer group relative">
                 <div 
-                  className="h-full bg-indigo-500 transition-all duration-300 relative" 
+                  className="h-full bg-cyan-500 transition-all duration-300 relative" 
                   style={{ width: `${(simIndex / totalPlacements) * 100}%` }}
                 >
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-indigo-500 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-cyan-500 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               </div>
             </div>
